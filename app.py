@@ -14,7 +14,7 @@ rooms = {}
 def get_images(room_code):
     room_folder = os.path.join(UPLOAD_FOLDER, room_code)
     if not os.path.exists(room_folder):
-        return jsonify([])  # return empty if room doesn't exist
+        return jsonify([]) 
 
     images = sorted(os.listdir(room_folder), reverse=True)
     return jsonify(images)

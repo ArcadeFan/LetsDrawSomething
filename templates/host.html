@@ -100,10 +100,11 @@
           images.forEach(image => {
             const img = document.createElement('img');
             img.src = `/static/uploads/${roomCode}/${image}`;
-            container.appendChild(img);
+            container.prepend(img);
           });
         });
     }
+
 
     let refreshInterval = setInterval(loadImages, refreshTime * 1000);
     loadImages(); 
