@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
 import uuid
+from datetime import datetime  
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
@@ -51,19 +52,31 @@ def draw(room_code):
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    room_code = request.form.get("room_code")
-    if room_code not in rooms:
-        return "Invalid room", 400
+    try:
+        room_code = request.form.get("room_code")
+        if room_code not in rooms:
+            print(f"[ERROR] Invalid room code received: {room_code}")
+            return "Invalid room", 400
 
-    data = request.files['image']
-    room_folder = os.path.join(UPLOAD_FOLDER, room_code)
-    os.makedirs(room_folder, exist_ok=True)
+        data = request.files['image']
+        if not data:
+            print("[ERROR] No image file received.")
+            return "No image provided", 400
 
-    filename = datetime.now().strftime("%Y%m%d%H%M%S") + ".png"
-    filepath = os.path.join(room_folder, filename)
-    data.save(filepath)
+        room_folder = os.path.join(UPLOAD_FOLDER, room_code)
+        os.makedirs(room_folder, exist_ok=True)
 
-    return "Uploaded"
+        filename = datetime.now().strftime("%Y%m%d%H%M%S") + ".png"
+        filepath = os.path.join(room_folder, filename)
+        data.save(filepath)
+
+        print(f"[INFO] Saved drawing to {filepath}")
+        return "Uploaded"
+    
+    except Exception as e:
+        print(f"[EXCEPTION] {e}")
+        return "Upload failed", 500
+
 
 
 if __name__ == "__main__":

@@ -4,9 +4,9 @@
   <title>Host View</title>
 </head>
 <body>
-  <div id="room-info" style="position:fixed;top:0;left:0;width:100%;background:#222;color:white;text-align:center;padding:5px;display:none;z-index:1000;">
-  Room: <span id="room-code"></span> - Name: <span id="room-name"></span>
-</div>
+  <div style="position:absolute;top:0;left:0;width:100%;background:#000;color:#fff;padding:10px;z-index:1000;text-align:center;">
+    Room: {{ room_name }} | Code: {{ room_code }}
+  </div>
 
   <h1>Submitted Drawings</h1>
 {% for image in images %}

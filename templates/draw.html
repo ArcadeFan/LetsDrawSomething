@@ -3,15 +3,30 @@
 <head>
   <title>Draw Something</title>
   <style>
-    body { font-family: sans-serif; text-align: center; }
+    body { font-family: sans-serif; text-align: center; margin: 0; padding-top: 60px; }
     canvas { border: 2px solid black; touch-action: none; }
     #controls { margin-top: 10px; }
+    #room-info {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #000;
+      color: #fff;
+      padding: 10px;
+      z-index: 1000;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <div style="position:absolute;top:0;left:0;width:100%;background:#000;color:#fff;padding:10px;z-index:1000;text-align:center;">
-    Room: {{ room_name }} | Code: {{ room_code }}
+
+  <div id="room-info">
+    Room: {{ room_name }} | Code: <span id="room-code">{{ room_code }}</span>
   </div>
+
+  <!-- Hidden room code for JavaScript -->
+  <div id="room-data" data-room-code="{{ room_code }}"></div>
 
   <h1>Draw Something!</h1>
   <canvas id="canvas" width="500" height="400"></canvas>
@@ -29,14 +44,15 @@
     const ctx = canvas.getContext("2d");
     const colorPicker = document.getElementById("colorPicker");
     const thicknessSlider = document.getElementById("thickness");
+    const roomCode = document.getElementById("room-data").dataset.roomCode;
 
     let drawing = false;
     let paths = [];
     let currentPath = [];
 
     function getPointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
       if (e.touches) {
-        const rect = canvas.getBoundingClientRect();
         return {
           x: e.touches[0].clientX - rect.left,
           y: e.touches[0].clientY - rect.top
@@ -106,30 +122,30 @@
       }
     }
 
-function sendDrawing() {
-  canvas.toBlob(function(blob) {
-    const formData = new FormData();
-    formData.append("image", blob, "drawing.png");
-    formData.append("room_code", "{{ room_code }}");
+    function sendDrawing() {
+      canvas.toBlob(function(blob) {
+        const formData = new FormData();
+        formData.append("image", blob, "drawing.png");
+        formData.append("room_code", roomCode);
 
-    fetch("/upload", {
-      method: "POST",
-      body: formData
-    }).then(res => {
-      if (res.ok) alert("Sent!");
-      else alert("Error sending");
-    });
-  }, "image/png");
-}
+        fetch("/upload", {
+          method: "POST",
+          body: formData
+        }).then(res => {
+          if (res.ok) alert("Drawing sent!");
+          else alert("Upload error");
+        }).catch(err => {
+          console.error(err);
+          alert("Upload failed");
+        });
+      }, "image/png");
+    }
 
-
-    // Mouse events
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
     canvas.addEventListener("mouseup", stopDrawing);
     canvas.addEventListener("mouseleave", stopDrawing);
 
-    // Touch events
     canvas.addEventListener("touchstart", startDrawing, { passive: false });
     canvas.addEventListener("touchmove", draw, { passive: false });
     canvas.addEventListener("touchend", stopDrawing);
