@@ -78,37 +78,39 @@
   <div id="imageContainer">
   </div>
 
-  <script>
-    let refreshTime = parseInt(localStorage.getItem("refreshTime") || 10);
-    document.getElementById("refreshControls").value = refreshTime;
+<script>
+  let refreshTime = parseInt(localStorage.getItem("refreshTime") || 10);
+  document.getElementById("refreshControls").value = refreshTime;
 
-    function changeRefresh() {
-      refreshTime = parseInt(document.getElementById("refreshControls").value);
-      localStorage.setItem("refreshTime", refreshTime);
-      clearInterval(refreshInterval);
-      refreshInterval = setInterval(loadImages, refreshTime * 1000);
-    }
+  function changeRefresh() {
+    refreshTime = parseInt(document.getElementById("refreshControls").value);
+    localStorage.setItem("refreshTime", refreshTime);
+    clearInterval(refreshInterval);
+    refreshInterval = setInterval(loadImages, refreshTime * 1000);
+  }
 
-    function loadImages() {
-      const roomCode = "{{ room_code }}";
-      fetch(`/get_images/${roomCode}`)
-        .then(response => response.json())
-        .then(images => {
-          const container = document.getElementById("imageContainer");
-          container.innerHTML = '';  
+  function loadImages() {
+    const roomCode = "{{ room_code }}";
+    fetch(`/get_images/${roomCode}`)
+      .then(response => response.json())
+      .then(images => {
+        const container = document.getElementById("imageContainer");
+        container.innerHTML = '';  
 
-          images.forEach(image => {
-            const img = document.createElement('img');
-            img.src = `/static/uploads/${roomCode}/${image}`;
-            container.prepend(img);
-          });
-        });
-    }
+        if(images.length > 0) {
+          const img = document.createElement('img');
+          img.src = `/static/uploads/${roomCode}/${images[0]}`;
+          container.appendChild(img);
+        } else {
+          container.innerHTML = '<p>No images yet.</p>';
+        }
+      });
+  }
 
+  let refreshInterval = setInterval(loadImages, refreshTime * 1000);
+  loadImages(); 
+</script>
 
-    let refreshInterval = setInterval(loadImages, refreshTime * 1000);
-    loadImages(); 
-  </script>
 
 </body>
 </html>
