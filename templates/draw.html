@@ -112,4 +112,21 @@
           body: formData
         }).then(res => {
           if (res.ok) alert("Sent!");
-          else ale
+          else alert("Error sending");
+        });
+      }, "image/png");
+    }
+
+    // Mouse events
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseleave", stopDrawing);
+
+    // Touch events
+    canvas.addEventListener("touchstart", startDrawing, { passive: false });
+    canvas.addEventListener("touchmove", draw, { passive: false });
+    canvas.addEventListener("touchend", stopDrawing);
+  </script>
+</body>
+</html>
