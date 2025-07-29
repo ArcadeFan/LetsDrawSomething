@@ -2,19 +2,63 @@
 <html>
 <head>
   <title>Host View</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #roomID {
+      position: fixed;
+      top: -40px;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      font-family: sans-serif;
+      transition: top 0.3s ease;
+      z-index: 1000;
+    }
+
+    body:hover #roomID {
+      top: 0;
+    }
+
+    .image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  </style>
 </head>
 <body>
-  <div style="position:absolute;top:0;left:0;width:100%;background:#000;color:#fff;padding:10px;z-index:1000;text-align:center;">
+
+  <div id="roomID">
     Room: {{ room_name }} | Code: {{ room_code }}
   </div>
 
-  <h1>Submitted Drawings</h1>
-{% for image in images %}
-  <img src="{{ url_for('static', filename='uploads/' + room_code + '/' + image) }}" width="300"><br>
-{% endfor %}
+  <div class="image-container">
+    {% for image in images %}
+      <img src="{{ url_for('static', filename='uploads/' + room_code + '/' + image) }}">
+    {% endfor %}
+  </div>
 
   <script>
-    setTimeout(() => location.reload(), 5000); // Auto-refresh every 5 seconds
+    setTimeout(() => location.reload(), 5000); 
   </script>
 </body>
 </html>
