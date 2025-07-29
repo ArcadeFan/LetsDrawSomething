@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Host View</title>
+    <title>Draw Together</title>
 </head>
 <body>
-<form action="/create_room" method="post" style="position:absolute;top:10px;left:10px;z-index:999;background:#fff;padding:10px;border-radius:8px">
-    <input name="username" placeholder="Your Name">
-    <input name="room_name" placeholder="Room Name">
-    <button type="submit">Create Room</button>
-</form>
-
+    <h1>Welcome to Let's Draw Something</h1>
+    <form action="/create_room" method="POST">
+        <input type="text" name="room_name" placeholder="Room Name" required>
+        <button type="submit">Create Room</button>
+    </form>
+    <br>
+    <form action="/join_room" method="POST">
+        <input type="text" name="room_code" placeholder="Enter Room Code" required>
+        <button type="submit">Join Room</button>
+    </form>
 </body>
 </html>

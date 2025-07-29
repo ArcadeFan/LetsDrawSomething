@@ -106,20 +106,22 @@
       }
     }
 
-    function sendDrawing() {
-      canvas.toBlob(function(blob) {
-        const formData = new FormData();
-        formData.append("image", blob, "drawing.png");
+function sendDrawing() {
+  canvas.toBlob(function(blob) {
+    const formData = new FormData();
+    formData.append("image", blob, "drawing.png");
+    formData.append("room_code", "{{ room_code }}");
 
-        fetch("/upload", {
-          method: "POST",
-          body: formData
-        }).then(res => {
-          if (res.ok) alert("Sent!");
-          else alert("Error sending");
-        });
-      }, "image/png");
-    }
+    fetch("/upload", {
+      method: "POST",
+      body: formData
+    }).then(res => {
+      if (res.ok) alert("Sent!");
+      else alert("Error sending");
+    });
+  }, "image/png");
+}
+
 
     // Mouse events
     canvas.addEventListener("mousedown", startDrawing);

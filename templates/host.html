@@ -9,9 +9,10 @@
 </div>
 
   <h1>Submitted Drawings</h1>
-  {% for image in images %}
-    <img src="{{ url_for('static', filename='uploads/' + image) }}" width="300"><br>
-  {% endfor %}
+{% for image in images %}
+  <img src="{{ url_for('static', filename='uploads/' + room_code + '/' + image) }}" width="300"><br>
+{% endfor %}
+
   <script>
     setTimeout(() => location.reload(), 5000); // Auto-refresh every 5 seconds
   </script>
