@@ -3,25 +3,29 @@
 <head>
   <title>Host View</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       overflow: hidden;
+      color: #eee;
+      font-family: 'UnifrakturCook', cursive;
     }
 
     #roomID {
       position: fixed;
-      top: -40px;
+      top: -60px;
       left: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       color: #fff;
       padding: 10px;
       text-align: center;
-      font-family: sans-serif;
       transition: top 0.3s ease;
       z-index: 1000;
+      font-size: 20px;
     }
 
     body:hover #roomID {
@@ -41,13 +45,34 @@
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
+      border: 3px solid #555;
+      border-radius: 10px;
+    }
+
+    #refreshControls {
+      margin-left: 10px;
+      font-size: 16px;
+      background: #222;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
 
   <div id="roomID">
-    Room: {{ room_name }} | Code: {{ room_code }}
+    Room: {{ room_name }} | Code: {{ room_code }} |
+    Refresh: 
+    <select id="refreshControls" onchange="changeRefresh()">
+      <option value="3">3s</option>
+      <option value="5" selected>5s</option>
+      <option value="10">10s</option>
+      <option value="15">15s</option>
+      <option value="30">30s</option>
+      <option value="60">60s</option>
+    </select>
   </div>
 
   <div class="image-container">
@@ -57,7 +82,20 @@
   </div>
 
   <script>
-    setTimeout(() => location.reload(), 5000); 
+    // Get saved refresh time from localStorage, or default to 5 seconds
+    let refreshTime = parseInt(localStorage.getItem("refreshTime") || 5);
+
+    document.getElementById("refreshControls").value = refreshTime;
+
+    function changeRefresh() {
+      refreshTime = parseInt(document.getElementById("refreshControls").value);
+      localStorage.setItem("refreshTime", refreshTime);
+    }
+
+    setTimeout(() => {
+      location.reload();
+    }, refreshTime * 1000);
   </script>
+
 </body>
 </html>
