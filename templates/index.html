@@ -1,15 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Menu</title>
+    <meta charset="UTF-8">
+    <title>Let’s Troll the Streamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #0e0e0e;
+            color: #f5f5f5;
+            font-family: 'Cinzel Decorative', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #a600ff;
+            text-shadow: 0 0 10px #a600ff, 0 0 20px #7000aa;
+            margin-bottom: 50px;
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 30px;
+            margin: 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            box-shadow: 0 0 10px rgba(166, 0, 255, 0.2);
+        }
+
+        input[type="text"] {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #a600ff;
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            background: #a600ff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 10px #a600ff, 0 0 20px #7000aa;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #7000aa;
+        }
+
+        form::placeholder {
+            color: #ccc;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Let's troll the streamer</h1>
+    <h1>Draw on me~</h1>
+
     <form action="/create_room" method="POST">
         <input type="text" name="room_name" placeholder="Room Name" required>
         <button type="submit">Create Room</button>
     </form>
-    <br>
+
     <form action="/join_room" method="POST">
         <input type="text" name="room_code" placeholder="Enter Room Code" required>
         <button type="submit">Join Room</button>
