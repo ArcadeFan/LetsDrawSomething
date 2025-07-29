@@ -4,6 +4,10 @@
   <title>Host View</title>
 </head>
 <body>
+  <div id="room-info" style="position:fixed;top:0;left:0;width:100%;background:#222;color:white;text-align:center;padding:5px;display:none;z-index:1000;">
+  Room: <span id="room-code"></span> - Name: <span id="room-name"></span>
+</div>
+
   <h1>Submitted Drawings</h1>
   {% for image in images %}
     <img src="{{ url_for('static', filename='uploads/' + image) }}" width="300"><br>
