@@ -12,6 +12,7 @@
       overflow: hidden;
       color: #eee;
       font-family: 'UnifrakturCook', cursive;
+      background-color: #111;
     }
 
     #roomID {
@@ -32,7 +33,7 @@
       top: 0;
     }
 
-    .image-container {
+    #imageContainer {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -41,7 +42,7 @@
       width: 100%;
     }
 
-    .image-container img {
+    #imageContainer img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
@@ -67,34 +68,46 @@
     Refresh: 
     <select id="refreshControls" onchange="changeRefresh()">
       <option value="3">3s</option>
-      <option value="5" selected>5s</option>
-      <option value="10">10s</option>
+      <option value="5">5s</option>
+      <option value="10" selected>10s</option>
       <option value="15">15s</option>
       <option value="30">30s</option>
       <option value="60">60s</option>
     </select>
   </div>
 
-  <div class="image-container">
-    {% for image in images %}
-      <img src="{{ url_for('static', filename='uploads/' + room_code + '/' + image) }}">
-    {% endfor %}
+  <div id="imageContainer">
   </div>
 
   <script>
-    // Get saved refresh time from localStorage, or default to 5 seconds
-    let refreshTime = parseInt(localStorage.getItem("refreshTime") || 5);
-
+    let refreshTime = parseInt(localStorage.getItem("refreshTime") || 10);
     document.getElementById("refreshControls").value = refreshTime;
 
     function changeRefresh() {
       refreshTime = parseInt(document.getElementById("refreshControls").value);
       localStorage.setItem("refreshTime", refreshTime);
+      clearInterval(refreshInterval);
+      refreshInterval = setInterval(loadImages, refreshTime * 1000);
     }
 
-    setTimeout(() => {
-      location.reload();
-    }, refreshTime * 1000);
+    function loadImages() {
+      const roomCode = "{{ room_code }}";
+      fetch(`/get_images/${roomCode}`)
+        .then(response => response.json())
+        .then(images => {
+          const container = document.getElementById("imageContainer");
+          container.innerHTML = '';  
+
+          images.forEach(image => {
+            const img = document.createElement('img');
+            img.src = `/static/uploads/${roomCode}/${image}`;
+            container.appendChild(img);
+          });
+        });
+    }
+
+    let refreshInterval = setInterval(loadImages, refreshTime * 1000);
+    loadImages(); 
   </script>
 
 </body>
