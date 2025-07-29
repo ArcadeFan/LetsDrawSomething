@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,jsonify
 import os
 import uuid
 from datetime import datetime  
@@ -8,6 +8,17 @@ UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 rooms = {} 
+
+
+@app.route("/get_images/<room_code>")
+def get_images(room_code):
+    room_folder = os.path.join(UPLOAD_FOLDER, room_code)
+    if not os.path.exists(room_folder):
+        return jsonify([])  # return empty if room doesn't exist
+
+    images = sorted(os.listdir(room_folder), reverse=True)
+    return jsonify(images)
+
 
 @app.route("/")
 def index():
