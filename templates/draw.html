@@ -3,39 +3,103 @@
 <head>
   <title>Draw Something</title>
   <style>
-    canvas { border: 1px solid black; }
+    body { font-family: sans-serif; text-align: center; }
+    canvas { border: 2px solid black; touch-action: none; }
+    #controls { margin-top: 10px; }
   </style>
 </head>
 <body>
   <h1>Draw Something!</h1>
   <canvas id="canvas" width="500" height="400"></canvas>
-  <br>
-  <button onclick="clearCanvas()">Clear</button>
-  <button onclick="sendDrawing()">Send</button>
+
+  <div id="controls">
+    <label>Color: <input type="color" id="colorPicker" value="#000000"></label>
+    <label>Thickness: <input type="range" id="thickness" min="1" max="20" value="3"></label>
+    <button onclick="undo()">Undo</button>
+    <button onclick="clearCanvas()">Clear</button>
+    <button onclick="sendDrawing()">Send</button>
+  </div>
 
   <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    let drawing = false;
+    const colorPicker = document.getElementById("colorPicker");
+    const thicknessSlider = document.getElementById("thickness");
 
-    canvas.addEventListener("mousedown", () => drawing = true);
-    canvas.addEventListener("mouseup", () => drawing = false);
-    canvas.addEventListener("mousemove", draw);
+    let drawing = false;
+    let paths = [];
+    let currentPath = [];
+
+    function getPointerPos(e) {
+      if (e.touches) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top
+        };
+      }
+      return { x: e.offsetX, y: e.offsetY };
+    }
+
+    function startDrawing(e) {
+      drawing = true;
+      currentPath = [];
+      const pos = getPointerPos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      currentPath.push({ x: pos.x, y: pos.y, color: colorPicker.value, width: thicknessSlider.value });
+      e.preventDefault();
+    }
 
     function draw(e) {
       if (!drawing) return;
-      ctx.lineWidth = 3;
+      const pos = getPointerPos(e);
+      ctx.strokeStyle = colorPicker.value;
+      ctx.lineWidth = thicknessSlider.value;
       ctx.lineCap = "round";
-      ctx.strokeStyle = "black";
-      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.lineTo(pos.x, pos.y);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
+      ctx.moveTo(pos.x, pos.y);
+      currentPath.push({ x: pos.x, y: pos.y, color: colorPicker.value, width: thicknessSlider.value });
+      e.preventDefault();
+    }
+
+    function stopDrawing() {
+      if (drawing) {
+        drawing = false;
+        paths.push([...currentPath]);
+        ctx.beginPath();
+      }
+    }
+
+    function undo() {
+      if (paths.length === 0) return;
+      paths.pop();
+      redraw();
     }
 
     function clearCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
+      paths = [];
+    }
+
+    function redraw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      for (const path of paths) {
+        if (path.length === 0) continue;
+        ctx.strokeStyle = path[0].color;
+        ctx.lineWidth = path[0].width;
+        ctx.moveTo(path[0].x, path[0].y);
+        for (let i = 1; i < path.length; i++) {
+          const pt = path[i];
+          ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.stroke();
+        ctx.beginPath();
+      }
     }
 
     function sendDrawing() {
@@ -48,10 +112,4 @@
           body: formData
         }).then(res => {
           if (res.ok) alert("Sent!");
-          else alert("Error sending");
-        });
-      }, "image/png");
-    }
-  </script>
-</body>
-</html>
+          else ale
