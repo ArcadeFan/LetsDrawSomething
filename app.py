@@ -17,7 +17,13 @@ def create_room():
     room_name = request.form.get("room_name", "Untitled")
     room_code = str(uuid.uuid4())[:6].upper()
     rooms[room_code] = {"name": room_name}
+    
+
+    room_folder = os.path.join(UPLOAD_FOLDER, room_code)
+    os.makedirs(room_folder, exist_ok=True)
+
     return redirect(url_for('host', room_code=room_code))
+
 
 @app.route("/join_room", methods=["POST"])
 def join_room():
